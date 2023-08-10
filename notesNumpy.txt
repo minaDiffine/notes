@@ -1,0 +1,332 @@
+NumPy
+
+ndarray object in the core:
+
+-fixed size (not dynamically resized) hanging the size of an ndarray will create a new array and delete the original.
+
+-same datatype of all elements in array
+
+-element-by-element operation is speedily executed by pre-compiled C code
+
+-vectorizarion = no looping and indexing
+
+-broadcasting = implicit element by element behaviour of operations
+
+-ndarray is a class 
+
+-install matplotlib
+
+*Dimensions are called axis [1,2,1] has 1 axis with 3 elements (length of 3)
+
+*Atributes of and ndarray:
+
+-ndarray.ndim - the number of axes (dimensions) of the array
+-ndarray.shape - the dimensions of the array. This is a tuple of integers indicating the size of the array in each dimension. For a matrix with n rows and m columns, shape will be (n,m)
+-ndarray.size - the total number of elements of the array
+-ndarray.dtype - numpy.int32, numpy.int16, and numpy.float64
+-ndarray.itemsize - in bytes
+-ndarray.data
+
+import numpy as np
+
+a = np.arange(15).reshape(3, 5) # creates matrix 3x5 with nums 0-14
+
+b = np.array([6, 7, 8])
+
+b = np.array([(1.5, 2, 3), (4, 5, 6)])
+
+c = np.array([[1, 2], [3, 4]], dtype=complex)
+
+np.array()
+np.zeros(10) # 10 elements eq to zero
+np.ones()
+np.empty() # faster than zero cause no set to 0
+
+By default, the dtype of the created array is float64, but it can be specified via the key word argument dtype
+
+np.arange(10, 30, 5)  # array([10, 15, 20, 25]) - can be used with float
+
+np.linspace(0, 2, 9)  # 9 numbers from 0 to 2
+
+x = np.linspace(0, 2 * pi, 100)      
+f = np.sin(x)
+
+the last axis is printed from left to right,
+the second-to-last is printed from top to bottom,
+
+np.set_printoptions(treshold=sys.maxsize) # to be able to print the full size of a array without ...
+
+Matrix product: A@B or A.dot(B)
+
+When using * product is element by element 
+
+rg = np.random.default_rng(1)  # create instance of default random number generator
+rg.random(2,23)
+
+a.sum(axis=0) # sum of eaxh col
+a.min(axis=1) # min of each row
+a.max()
+a.cumsum(axis=1) # cumulative sum of each row
+
+UFUNC = UNIVERSAL FUNCTIONS : sin, cos, exp
+
+np.add(b,c)
+
+a[::-1]  # reversed a
+
+b = np.fromfunction(f, (5, 4), dtype=int) # f is a function that takes 2 args of indexes and returns a val
+
+b[0:5, 1]  # each row in the second column of b
+b[:, 1]    # equivalent to the previous example
+
+b[i] <=> b[i,:] <=> b[i, ... ]
+
+x[4, ..., 5, :] equal to x[4, :, :, 5, :]
+
+for element in b.flat: #flat makes us able to iterate through every elem 
+    print(element)
+
+a = np.floor(10 * rg.random((3, 4))) # (3,4) is the shape
+a=array([[3., 7., 3., 4.],
+       [1., 4., 2., 2.],
+       [7., 2., 4., 9.]])
+
+a.ravel()  # returns the array, flattened (1 axis)
+
+a.reshape(6, 2)  # returns the array with a modified shape
+
+a.T  # returns the array, transposed
+
+a.reshape(3, -1) # first dim is 3, and others are automaticaly calculated
+
+np.vstack((a, b)) # b is under a in new array
+
+np.hstack((a, b)) # b is rigt part of matrix, a is left
+
+np.column_stack((a, b))  # returns a 2D array
+
+row_stack is same as vstack
+
+np.r_[1:4, 0, 4] # array([1, 2, 3, 0, 4]) row stack range
+
+np.hsplit(a, 3) # Split `a` into 3
+
+np.hsplit(a, (3, 4)) # Split `a` after the third and the fourth column
+
+*Simple assignments make no copy of objects or their data.
+*Python passes mutable objects as references, so function calls make no copy.
+
+c = a.view() # method creates a new array object that looks at the same data (c is not a but c.base is a)
+
+c.flags.owndata is False
+
+when change c, a araay changes originally
+
+d = a.copy()  # a new array object with new data is created
+b = a[:100].copy() #slicing and deep copy
+
+del a #release of mem 
+------------------------------------------------------------
+Indexing:
+i=[1,1,5,8]
+a[i]  # the elements of `a` at the positions `i`
+
+j = np.array([[3, 4], [9, 7]])  # a bidimensional array of indices
+
+a[j]  # the same shape as `j`
+array([[ 9, 16],
+       [81, 49]])
+       
+a[i,j] is same as a[(i,j)] # i and j can be multidimensional
+l=(i,j) so we can use a[l]    
+
+ind = data.argmax(axis=0)   # index of the maxima for each series
+
+when the list of indices contains repetitions, the assignment is done several times, leaving behind the last value, but not when a+=1 (then it is added just once)
+    
+------------------------------------------------------------
+The ix_ function can be used to combine different vectors so as to obtain the result for each n-uplet. For example, if you want to compute all the a+b*c
+
+-------------------------------------------
+Histograms
+
+import matplotlib.pyplot as plt
+plt.hist(v, bins=50, density=True)       # matplotlib version (plot)
+
+# Compute the histogram with numpy and then plot it
+
+(n, bins) = np.histogram(v, bins=50, density=True)  # NumPy version (no plot)
+
+plt.plot(.5 * (bins[1:] + bins[:-1]), n) 
+plt.stairs(n, bins)
+
+tensor is a 3D array
+
+------------------------------------------------
+
+x = np.ones(2, dtype=np.int64)
+np.sort(arr)
+    argsort, which is an indirect sort along a specified axis,
+    lexsort, which is an indirect stable sort on multiple keys,
+    searchsorted, which will find elements in a sorted array, and
+    partition, which is a partial sort.
+
+
+np.concatenate((a, b))
+np.reshape(a, newshape=(1, 6), order='C')
+
+a2 = a[np.newaxis, :] # to add new axis as a first dim
+
+b = np.expand_dims(a, axis=1) #adds dim 1 (axis=0 adds dim 0 and shifts other dims)
+
+
+print(a[a < 5]) # prints all vals less than 5
+
+divisible_by_2 = a[a%2==0]
+c = a[(a > 2) & (a < 11)]
+
+b = np.nonzero(a < 5) # a tuple of arrays was returned: one for each dimension. The first array represents the row indices where these values are found, and the second array represents the column indices where the values are found.
+
+coordinates: list(zip(b[0],b[1]))
+
+----------------------------------------------------
+
+importing data with genfromtxt - 2 loops flexibility
+
+or loadtxt
+
+import numpy as np
+from io import StringIO
+
+if the filename ends with '.gz', a gzip archive is expected; if it ends with 'bz2', a bzip2 archive is assumed
+
+np.genfromtxt(StringIO(data), delimiter=",") #data is the string 
+
+default delim is none, and it means function is using white spaces as delims
+
+np.genfromtxt(StringIO(data), delimiter=",", dtype="|U5", autostrip=True) #no white spaces before and after
+
+comments="#" - attribute for ignoring parts of stings
+
+skip_header=3, skip_footer=5
+
+usecols=(0,1) #reads only first two cols of data
+
+np.genfromtxt(StringIO(data),names="a, b, c", usecols=("a", "c")) #select only some colons
+
+dtype=float is the default for genfromtxt
+
+np.genfromtxt(data, dtype=[(_, int) for _ in "abc"])
+
+np.genfromtxt(data, names="A, B, C")
+
+np.genfromtxt(data, skip_header=1, names=True)
+names=True means the col names are read from the first line that is not header (it can also be commented)
+
+np.genfromtxt(data, dtype=(int, float, int))
+
+We need to keep in mind that defaultfmt is used only if some names are expected but not defined.
+
+case_sensitive=False 'lower' 'upper'
+
+Converters arguments
+
+convertfunc = lambda x: float(x.strip(b"%"))/100
+
+np.genfromtxt(StringIO(data), delimiter=",", names=names,converters={1: convertfunc})
+
+kwargs = dict(delimiter=",",
+              dtype=int,
+              names="a,b,c",
+              missing_values={0:"N/A", 'b':" ", 2:"???"},
+              filling_values={0:0, 'b':0, 2:-999})
+
+np.genfromtxt(StringIO(data), **kwargs)
+
+unemask=True #the output is MaskedArray
+
+-------------------------------------------------
+
+Data types
+
+numpy.bool_
+.byte - signed char
+.ubyte - unsigned char
+.short
+.ushort
+.intc
+.uintc
+.int_ - long
+.uint = unsigned long
+.longlong
+.ulonglong
+.half / .float16 -Half precision float: sign bit, 5 bits exponent, 10 bits mantissa
+.single = float
+.double
+.long double
+.csingle - float complex
+.cdouble - double complex
+.clongdouble - long double complex
+.int64
+
+access like np.bool_
+
+z.astype(float)       
+np.int8(z)         
+z.dtype # to se a datatype of a variable or array
+
+np.issubdtype(d, np.integer)
+
+numpy.iinfo and numpy.finfo to check for values maximum and minimum
+---------------------------------------------------------------------
+
+Broadcasting
+
+The term broadcasting describes how NumPy treats arrays with different shapes during arithmetic operations
+
+a = np.array([0.0, 10.0, 20.0, 30.0])
+
+b = np.array([1.0, 2.0, 3.0])
+
+a[:, np.newaxis] + b #inserts a new axis to a and makes broadcast possible
+
+ndarray.view
+ndarray.copy
+
+advanced indexing ALWAYS creates a copy 
+ex. x = np.arange(9).reshape(3, 3)
+y = x[[1, 2]]
+y.base is None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

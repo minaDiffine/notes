@@ -1,0 +1,102 @@
+Points Curves Surfaces
+
+A point has a topological dimension of 0 Point class
+A curve has a topological dimension of 1 LineStrng and LinearRing class
+A surface has a topological dminension of 2 Polygon class
+
+Collections of points are implemented by a MultiPoint class, collections of curves by a MultiLineString class, and collections of surfaces by a MultiPolygon class.
+
+Shapely does not support coordinate system transformations.
+
+interior, boundary, and exterior point set
+
+All operations are performed in the x-y plane. A third z coordinate value may be used when constructing instances, but has no effect on geometric analysis.
+ 
+In all constructors, numeric values are converted to type float
+
+object.area - returns the area (float) of the object
+
+object.bounds - returns a tuple (minx,miny,maxx,maxy) that bounds an object
+
+object.length 
+
+object.minimum_clearance - returnes the smallest distance bu witch a node could be moved to produce an invalid geometry (for point it returns math.infinity)
+
+object.geom_type
+
+object.distance(other)
+
+object.hausdorff_distance(other) - furthest distance that a point on either geometry can be from the nearest point to it on the other geometry
+
+object.representative_point() -     Returns a cheaply computed point that is guaranteed to be within the geometric object.
+
+=!donut.centroid
+
+form shapely import Polygon,Point,LineString
+
+Polygon([[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]).minimum_clearance
+Point(0, 0).geom_type
+Point(0,0).distance(Point(1,1))
+
+-------------------------------------------------------
+
+point = Point(0.0, 0.0)
+point.area is 0
+point.lenght is 0
+point.bounds
+list(point.coords)
+point.x
+point.y
+Point(point) - The Point constructor also accepts another Point instance, thereby making a copy.
+
+---------------------------------------------------------
+
+The LineString constructor takes an ordered sequence of 2 or more (x, y[, z]) point tuples.
+
+can be complex (has intersectons with self) and simple
+
+line = LineString([(0, 0), (1, 1)])
+line.area
+line.length
+line.bounds
+len(line.coords)
+list(line.coords)
+
+line.coords[:] - they can be sliced
+LineString(line) - constructor that makes a copy of line
+
+LineString([Point(0.0, 1.0), (2.0, 3.0), Point(4.0, 5.0)]) - this is also valid constructor
+
+----------------------------------------------------------------------
+
+class Polygon(shell[, holes=None])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
