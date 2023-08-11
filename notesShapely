@@ -70,6 +70,208 @@ LineString([Point(0.0, 1.0), (2.0, 3.0), Point(4.0, 5.0)]) - this is also valid 
 ----------------------------------------------------------------------
 
 class Polygon(shell[, holes=None])
+Rings of a valid Polygon may not cross each other, but may touch at a single point only.
+
+Component rings are accessed via exterior and interiors properties.
+
+polygon = Polygon([(0, 0), (1, 1), (1, 0)])
+
+list(polygon.exterior.coords)
+list(polygon.interiors)
+
+coords = [(0, 0), (1, 1), (1, 0)]
+r = LinearRing(coords)
+s = Polygon(r)
+s.area
+t = Polygon(s.buffer(1.0).exterior, [r])
+
+Rectangular polygons occur commonly, and can be conveniently constructed using the shapely.geometry.box() function.
+
+ shapely.geometry.box(minx, miny, maxx, maxy, ccw=True)
+ 
+ shapely.geometry.polygon.orient(polygon, sign=1.0)
+ 
+------------------------------------------------------------------------
+
+Collections
+
+heterogeneous collections of geom objects may result from some operantions
+
+frozentset-like collections of geometric objects
+
+example:
+a = LineString([(0, 0), (1, 1), (1,2), (2,2)])
+b = LineString([(0, 0), (1, 1), (2,1), (2,2)])
+x = a.intersection(b)
+
+Members of a GeometryCollection are accessed via the geoms property.
+list(x.geoms)
+
+when possibel it is better to use homogeneous types
+
+MultiPoint is class that represents a collection of points
+points = MultiPoint([(0.0, 0.0), (1.0, 1.0)])
+list(points.geoms)
+
+MultiLineString is a class that represents collection of LineStrings
+coords = [((0, 0), (1, 1)), ((-1, 0), (1, 0))]
+lines = MultiLineString(coords)
+
+MultiPoligons is a class that represents collection of Poligons
+
+-------------------------------------------------------
+
+Empty features - almost no operations are supported by empty features
+line=LineString()
+line.is_empty
+line.length
+line.bounds - returns (nan,nan,nan,nan)
+list(line.coords) - returns an empty list
+
+The list of coordinates that describe a geometry are represented as the CoordinateSequence object
+
+---------------------------------------------------------
+
+object.interpolate(distance[, normalized=False]) - returns a point at the specified distance along a linear geometric object
+
+ object.project(other[, normalized=False]) - suprotno od interpolate
+
+-----------------------------------------------------------
+
+Unary Predicates
+
+object.has_z ex. Point(0,0).has_z returns true or false
+object.is_ccw returns true if coordinates are in counter-clockwise order (LinearRing objects only)
+
+A ring with an undesired orientation can be reversed like this:
+ring = LinearRing([(0,0), (1,1), (1,0)])
+ring.is_ccw
+ring2 = LinearRing(list(ring.coords)[::-1])
+
+object.is_empty
+from operator import attrgetter
+empties = filter(attrgetter('is_empty'), [Point(), Point(0, 0)])
+len(list(empties))
+
+ object.is_ring
+ object.is_simple - returns true if object does not cross itself
+ 
+ object.is_valid
+ ******************
+ example wit wraps:
+ 
+ from functools import wraps
+ def validate(func):
+ 	@wraps(func)
+ 	def wrapper(*args, **kwargs):
+ 		ob=func(*args, **kwargs)
+ 		if not ob.is_valid:
+ 			raise TopologicalError("")
+ 		return ob
+ 	return wrapper
+ 	
+ @validate
+ def ring(cooridnates):
+ 	return LinearRing(coordinates)
+ *******************
+ 
+ Binary Predicates - implemented as methods
+ 
+ object.__eq__(other) - coordinates of two object match precisely
+ 
+ object.equeals(other) -     Returns True if the set-theoretic boundary, interior, and exterior of the object coincide with those of the other.
+ 
+object.equals_exact(other, tolerance)
+object.contains(other)
+
+ a.contains(b) == b.within(a)
+ 
+Binary predicates can be used directly as predicates for filter() or itertools.ifilter().
+
+contained = list(filter(line.contains, [Point(), Point(0.5, 0.5)]))
+
+object.covers(other) - similar to contains but doesnt have to contain interior in interior
+
+object.covered_by(other)
+
+object.crosses(other) returns true if interior of object intersects the interior of other but does not contain it and dimensions of intersection is less than dimensions of one or the other
+
+ object.disjoint(other)
+ 
+ object.intersects(other)
+ 
+ object.overlaps(other)
+ 
+ object.touches(other)
+
+object.within(other) - inverse of contains
+
+---------------------------------------------------
+
+DE-9IM Relationships
+
+The relate() method tests all the DE-9IM [4] relationships between objects, of which the named relationship predicates above are a subset.
+
+object.relate(other) -     Returns a string representation of the DE-9IM matrix of relationships between an object’s interior, boundary, exterior and those of another geometric object.
+
+ object.relate_pattern(other, pattern)
+--------------------------------------------------------
+
+Spatial Analysis Methods
+
+object.boundary-Returns a lower dimensional object representing the object’s set-theoretic boundary. The boundary of a polygon is a line, the boundary of a line is a collection of points. The boundary of a point is an empty collection.
+
+a = Point(1, 1).buffer(1.5) - krug sa centrom u 1,1 poluprecnika 1.5
+
+ object.centroid
+ object.difference(other)
+ object.intersection(other)
+ object.symmetric_difference(other)
+ object.union(other)
+
+a.union(b).boundary
+a.boundary.union(b.boundary)
+
+a.boundary.union(b.boundary) less expensive than .union
+
+Several of these set-theoretic methods can be invoked using overloaded operators:
+
+    intersection can be accessed with and, &
+
+    union can be accessed with or, |
+
+    difference can be accessed with minus, -
+
+    symmetric_difference can be accessed with xor, ^
+
+---------------------------------------------------------
+Constructive methods
+
+object.buffer(distance, quad_segs=16, cap_style=1, join_style=1, mitre_limit=5.0, single_sided=False) - Returns an approximate representation of all points within a given distance of the this geometric object.
+
+ object.envelope -     Returns a representation of the point or smallest rectangular polygon (with sides parallel to the coordinate axes) that contains the object.
+
+ object.minimum_rotated_rectangle - Returns the general minimum bounding rectangle that contains the object. Unlike envelope this rectangle is not constrained to be parallel to the coordinate axes. If the convex hull of the object is a degenerate (line or point) this degenerate is returned.
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
