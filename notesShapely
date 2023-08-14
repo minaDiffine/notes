@@ -253,21 +253,94 @@ object.buffer(distance, quad_segs=16, cap_style=1, join_style=1, mitre_limit=5.0
 
  object.minimum_rotated_rectangle - Returns the general minimum bounding rectangle that contains the object. Unlike envelope this rectangle is not constrained to be parallel to the coordinate axes. If the convex hull of the object is a degenerate (line or point) this degenerate is returned.
  
+ object.convex_hull -     Returns a representation of the smallest convex Polygon containing all the points in the object unless the number of points in the object is less than three. For two points, the convex hull collapses to a LineString; for 1, a Point.
+
+object.parallel_offset(distance, side, resolution=16, join_style=1, mitre_limit=5.0) - Returns a LineString or MultiLineString geometry at a distance from the object on its right or its left side.
+
+ object.offset_curve(distance, quad_segs=16, join_style=1, mitre_limit=5.0) - Returns a LineString or MultiLineString geometry at a distance from the object on its right or its left side.
  
+  object.simplify(tolerance, preserve_topology=True) -     Returns a simplified representation of the geometric object.
 
+------------------------------------------------------
 
+Affine transformations
 
+shapely.affinity module - collection of affine transform functions
 
+shapely.affinity.affine_transform(geom, matrix) - Returns a transformed geometry using an affine transformation matrix.  
 
+for 2D matrix is formed of: 
+    [a, b, d, e, xoff, yoff]
+    x'=ax+by+xoff
+    y'=dx+ey+yoff
+for 3D:
+    [a, b, c, d, e, f, g, h, i, xoff, yoff, zoff]
+	x'=ax+by+cz+xoff
+	y'=dx+ey+fz+yoff
+	z'=gx+hy+iz+zoff
+	
+shapely.affinity.rotate(geom, angle, origin='center', use_radians=False) - Returns a rotated geometry on a 2D plane.
 
+angle=teta
 
+offsets calculation:
 
+xoff=x0-x0costeta+y0sinteta
+yoff=y0-x0sinteta-y0costeta
 
+shapely.affinity.scale(geom, xfact=1.0, yfact=1.0, zfact=1.0, origin='center') -  Returns a scaled geometry, scaled by factors along each dimension.
 
+centroid = teziste
 
+shapely.affinity.skew(geom, xs=0.0, ys=0.0, origin='center', use_radians=False) - Returns a skewed geometry, sheared by angles along x and y dimensions.
 
+shapely.affinity.translate(geom, xoff=0.0, yoff=0.0, zoff=0.0) - Returns a translated geometry shifted by offsets along each dimension.
 
+ shapely.ops.transform(func, geom) - Applies func to all coordinates of geom and returns a new geometry of the same type from the transformed coordinates.
+ 
+ -------------------------------------------------------
+ 
+ Merging linear features
+ 
+ shapely.ops module
+ 
+  shapely.ops.polygonize(lines) - Returns an iterator over polygons constructed from the input lines.
+  
+  shapely.ops.polygonize_full(lines) -  Creates polygons from a source of lines, returning the polygons and leftover geometries.
+  
+   shapely.ops.linemerge(lines) - Returns a LineString or MultiLineString representing the merger of all contiguous elements of lines.
+   
+ -----------------------------------------------------------
+ 
+ Rectangle clipping
+ 
+  shapely.ops.clip_by_rect(geom, xmin, ymin, xmax, ymax) - The geometry is clipped in a fast but possibly dirty way. The output is not guaranteed to be valid. No exceptions will be raised for topological errors.
+  
+  polygon = Polygon(
+    shell=[(0, 0), (0, 30), (30, 30), (30, 0), (0, 0)],
+    holes=[[(10, 10), (20, 10), (20, 20), (10, 20), (10, 10)]],)
+  clipped_polygon = clip_by_rect(polygon, 5, 5, 15, 15)
+  clipped_polygon
 
+---------------------------------------------------------------
+
+The unary_union() function in shapely.ops is more efficient than accumulating with union().
+
+ shapely.ops.unary_union(geoms) - Returns a representation of the union of the given geometric objects.
+ 
+  shapely.ops.triangulate(geom, tolerance=0.0, edges=False) - Returns a Delaunay triangulation of the vertices of the input geometry.
+  
+   shapely.ops.voronoi_diagram(geom, envelope=None, tolerance=0.0, edges=False) - 
+
+ shapely.ops.nearest_points(geom1, geom2) - Returns a tuple of the nearest points in the input geometries. The points are returned in the same order as the input geometries.
+ 
+ shapely.ops.substring(geom, start_dist, end_dist[, normalized=False]) - Return the LineString between start_dist and end_dist or a Point if they are at the same location
+ 
+  prepared.prep(ob) - Creates and returns a prepared geometric object.
+
+ validation.explain_validity(ob) - Returns a string explaining the validity or invalidity of the object.
+ 
+  validation.make_valid(ob) - Returns a valid representation of the geometry, if it is invalid. If it is valid, the input geometry will be returned.
 
 
 
